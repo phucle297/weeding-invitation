@@ -1,0 +1,15 @@
+{
+  "name": "weeding-invitation",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/phucle297/weeding-invitation.git"
+  },
+  "author": "permees",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/phucle297/weeding-invitation/issues"
+  }
+}
