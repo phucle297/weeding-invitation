@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wireframe · Duy Phúc &amp; Linh Đan</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; background: #fdfbf7; color: #594632; font: 18px/1.65 Georgia, serif; }
+    h1, h2, h3 { color: #886126; font-weight: 400; line-height: 1.3; }
+    header, section, footer { max-width: 1040px; margin: auto; padding: 64px 28px; text-align: center; }
+    section + section, footer { border-top: 1px solid #cbb48c; }
+    img { display: block; max-width: 100%; height: auto; }
+    .story { margin: 32px auto; max-width: 800px; }
+    .strip { width: clamp(180px, 50vw, 300px); margin: 40px auto; padding: 10px; background: #fff; box-shadow: 0 4px 20px #59463220; }
+    .strip img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; margin-bottom: 10px; }
+    .slot { height: 8px; width: 65%; margin: auto; background: #796952; border-radius: 8px; }
+    .families, .venue { display: grid; grid-template-columns: 1fr 1fr; align-items: center; gap: 40px; }
+    .names { font-size: clamp(28px, 5vw, 46px); color: #886126; }
+    .venue img { width: 100%; }
+    a { color: inherit; }
+    .music { display: inline-block; margin: 32px 0; padding: 12px 22px; border: 1px solid #886126; border-radius: 30px; }
+    @media (max-width: 600px) { .venue { grid-template-columns: 1fr; gap: 20px; } .families { gap: 16px; font-size: 15px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <p>WIREFRAME ĐÃ CHỐT · 25.10.2026</p>
+    <h1>Trắng ngà · vàng cổ · dấu sáp bạc</h1>
+    <p>Thu cửa sổ về 390px để xem mobile, mở rộng để xem desktop. Đây là tài liệu thiết kế, không phải website hoạt động.</p>
+    <img class="story" src="assets/opening-storyboard.png" alt="Bốn trạng thái: đóng, mở nắp trên, kéo thiệp lên và zoom, phong bì khuất khỏi khung">
+    <p>Sáp đi cùng nắp. Nắp sau → thiệp ở giữa → túi phong bì trước. Không xoay, không tách dấu sáp. Thiệp phóng lớn liên tục rồi nối vào dải ảnh.</p>
+  </header>
+  <section>
+    <div class="slot"></div>
+    <div class="strip">
+      <img src="../../public/images/wedding-01.webp" alt="Ảnh mock 1 · tỷ lệ 2:3">
+      <img src="../../public/images/wedding-02.webp" alt="Ảnh mock 2 · tỷ lệ 2:3">
+      <img src="../../public/images/wedding-03.webp" alt="Ảnh mock 3 · tỷ lệ 2:3">
+      <img src="../../public/images/wedding-04.webp" alt="Ảnh mock 4 · tỷ lệ 2:3">
+      <img src="../../public/images/wedding-05.webp" alt="Ảnh mock 5 · tỷ lệ 2:3">
+    </div>
+    <p>TRÂN TRỌNG KÍNH MỜI</p><h2>ABC</h2>
+    <h1>Duy Phúc &amp; Linh Đan</h1><p>06 . 12 . 2026</p>
+  </section>
+  <section>
+    <h2>LỄ THÀNH HÔN</h2>
+    <div class="families"><p>NHÀ TRAI<br>Lê Đàm Duy Minh<br>Trần Thị Đức Hạnh<br>Đà Nẵng</p><p>NHÀ GÁI<br>Phạm Đình Toàn<br>Nguyễn Thị Hồng Nhung<br>Đồng Nai</p></div>
+    <p class="names">Lê Đàm Duy Phúc<br>&amp;<br>Phạm Nguyễn Linh Đan</p>
+    <p>09:30 · CHỦ NHẬT<br>06.12.2026<br>TƯ GIA<br>P. Hòa Cường, TP. Đà Nẵng</p>
+  </section>
+  <section>
+    <h2>TRÂN TRỌNG KÍNH MỜI DỰ TIỆC</h2>
+    <div class="venue">
+      <img src="assets/minh-toan-galaxy.png" alt="Minh họa Minh Toàn Galaxy theo ảnh khách sạn người dùng cung cấp">
+      <div><h2>MINH TOÀN<br>GALAXY HOTEL</h2><p>Sảnh Venus – Tầng 2</p><p>306 đường 2/9, P. Hòa Cường, Đà Nẵng</p><h3>06.12.2026</h3><p>11:00 Đón khách · 12:00 Khai tiệc</p><p>XEM CHỈ ĐƯỜNG ↗</p></div>
+    </div>
+  </section>
+  <footer><p>CÙNG CHỜ NGÀY CHUNG ĐÔI</p><h2>-- ngày · -- giờ · -- phút · -- giây</h2><h2>Hẹn gặp bạn ngày chung đôi</h2><p>Duy Phúc &amp; Linh Đan</p><span class="music">♫ Bật/tắt nhạc · vùng an toàn</span></footer>
+</body>
+</html>
