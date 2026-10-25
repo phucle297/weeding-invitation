@@ -1,255 +1,171 @@
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref } from "vue";
+// biome-ignore lint/correctness/noUnusedImports: Component được dùng trong template Vue.
+import OpeningEnvelope from "./components/OpeningEnvelope.vue";
 import { weddingContent as content } from "./content";
 import { getCountdown, isCountdownFinished } from "./countdown";
+import { getGuestName } from "./guest";
+import { createWeddingMusic } from "./music";
 
+const opened = ref(false);
+const started = ref(false);
+const skipMotion = ref(false);
+const title = ref<HTMLElement>();
+const guestName = getGuestName(window.location.search);
 const remaining = ref(getCountdown(content.wedding.isoDate));
-// biome-ignore lint/correctness/noUnusedVariables: Vue template binding.
-const submitted = ref(false);
-let timer: ReturnType<typeof setInterval> | undefined;
+const music = createWeddingMusic();
+const musicPlaying = ref(false);
+const musicWanted = ref(false);
+const musicNotice = ref("");
+let clock: ReturnType<typeof setInterval> | undefined;
 
-// biome-ignore lint/correctness/noUnusedVariables: Vue template binding.
-const countdownItems = computed(() => [
-	{ value: remaining.value.days, label: content.countdown.labels[0] },
-	{ value: remaining.value.hours, label: content.countdown.labels[1] },
-	{ value: remaining.value.minutes, label: content.countdown.labels[2] },
-	{ value: remaining.value.seconds, label: content.countdown.labels[3] },
+const countdown = computed(() => [
+	{ value: remaining.value.days, label: "Ngày" },
+	{ value: remaining.value.hours, label: "Giờ" },
+	{ value: remaining.value.minutes, label: "Phút" },
+	{ value: remaining.value.seconds, label: "Giây" },
 ]);
 
-onMounted(() => {
-	document.title = `${content.meta.title} | ${content.wedding.date}`;
-	document
-		.querySelector('meta[name="description"]')
-		?.setAttribute("content", content.meta.description);
+async function playMusic() {
+	musicWanted.value = true;
+	musicPlaying.value = await music.play();
+	musicNotice.value = musicPlaying.value
+		? ""
+		: "Chạm nút nhạc để thử phát lại.";
+}
 
+function startOpening() {
+	started.value = true;
+	void playMusic();
+}
+
+async function finishOpening(skip: boolean) {
+	if (opened.value) return;
+	skipMotion.value = skip;
+	opened.value = true;
+	document.body.classList.remove("invitation-locked");
+	await nextTick();
+	title.value?.focus({ preventScroll: true });
+}
+
+async function toggleMusic() {
+	if (musicWanted.value && musicPlaying.value) {
+		musicWanted.value = false;
+		await music.pause();
+		musicPlaying.value = false;
+	} else {
+		await playMusic();
+	}
+}
+
+async function handleVisibility() {
+	if (document.hidden) {
+		await music.pause();
+		musicPlaying.value = false;
+	} else if (musicWanted.value) {
+		await playMusic();
+	}
+}
+
+onMounted(() => {
+	document.body.classList.add("invitation-locked");
+	document.addEventListener("visibilitychange", handleVisibility);
 	if (!isCountdownFinished(remaining.value)) {
-		timer = setInterval(() => {
+		clock = setInterval(() => {
 			remaining.value = getCountdown(content.wedding.isoDate);
-			if (isCountdownFinished(remaining.value)) {
-				clearInterval(timer);
-				timer = undefined;
-			}
-		}, 1_000);
+			if (isCountdownFinished(remaining.value)) clearInterval(clock);
+		}, 1000);
 	}
 });
 
-onBeforeUnmount(() => clearInterval(timer));
+onBeforeUnmount(() => {
+	clearInterval(clock);
+	music.dispose();
+	document.body.classList.remove("invitation-locked");
+	document.removeEventListener("visibilitychange", handleVisibility);
+});
+
+// Các binding dưới được dùng trong template; expose giúp Biome nhận diện.
+defineExpose({
+	countdown,
+	guestName,
+	startOpening,
+	finishOpening,
+	toggleMusic,
+});
 </script>
 
 <template>
-	<header class="site-header">
-		<a class="monogram" href="#top">{{ content.meta.monogram }}</a>
-		<nav :aria-label="content.meta.navigationLabel">
-			<a v-for="item in content.navigation" :key="item.href" :href="item.href">
-				{{ item.label }}
-			</a>
-		</nav>
-	</header>
-
-	<main>
-		<section id="top" class="hero">
-			<img
-				v-if="content.images.hero"
-				class="hero-image"
-				:src="content.images.hero"
-				:alt="content.hero.imageAlt"
-			/>
-			<div v-else class="hero-placeholder" aria-hidden="true">
-				<span class="hero-orbit hero-orbit-one"></span>
-				<span class="hero-orbit hero-orbit-two"></span>
-			</div>
-			<div class="hero-shade"></div>
-			<div class="hero-corner hero-corner-left" aria-hidden="true"></div>
-			<div class="hero-corner hero-corner-right" aria-hidden="true"></div>
-			<div class="hero-content reveal">
-				<p class="eyebrow hero-eyebrow">{{ content.hero.eyebrow }}</p>
-				<p class="hero-invitation">{{ content.hero.invitation }}</p>
-				<h1>
-					<span>{{ content.couple.groomShort }}</span>
-					<span class="sr-only">{{ content.meta.conjunction }}</span>
-					<i class="hero-ampersand" aria-hidden="true">&</i>
-					<span>{{ content.couple.brideShort }}</span>
-				</h1>
-				<div class="hero-date">
-					<span>{{ content.wedding.day }}</span>
-					<strong>{{ content.wedding.date }}</strong>
-					<span>{{ content.wedding.location }}</span>
-				</div>
-			</div>
-			<a class="scroll-cue" href="#welcome">
-				<span>{{ content.hero.scroll }}</span>
-				<b aria-hidden="true">↓</b>
-			</a>
-		</section>
-
-		<section id="welcome" class="section welcome-section">
-			<div class="section-inner welcome-grid">
-				<div class="welcome-mark" aria-hidden="true">
-					<span>{{ content.meta.doubleHappiness }}</span>
-				</div>
-				<div class="welcome-copy reveal">
-					<p class="eyebrow">{{ content.welcome.eyebrow }}</p>
-					<h2>{{ content.welcome.title }}</h2>
-					<div class="rings" aria-hidden="true"><i></i><i></i></div>
-					<p class="lead">{{ content.welcome.body }}</p>
-					<p class="script-note">{{ content.welcome.note }}</p>
-				</div>
-				<div class="families reveal">
-					<article v-for="family in content.families" :key="family.label" class="family-card">
-						<p class="eyebrow">{{ family.label }}</p>
-						<strong>{{ family.father }}</strong>
-						<strong>{{ family.mother }}</strong>
-						<span>{{ family.address }}</span>
-					</article>
-				</div>
-			</div>
-		</section>
-
-		<section id="story" class="section story-section">
-			<div class="section-inner story-grid">
-				<div class="story-visual reveal">
-					<img v-if="content.images.story" :src="content.images.story" :alt="content.story.imageAlt" />
-					<div v-else class="image-placeholder story-placeholder" role="img" :aria-label="content.story.imageAlt">
-						<span aria-hidden="true">{{ content.meta.monogram }}</span>
-					</div>
-					<div class="story-stamp" aria-hidden="true">{{ content.wedding.date }}</div>
-				</div>
-				<div class="story-copy reveal">
-					<p class="eyebrow">{{ content.story.eyebrow }}</p>
-					<h2>{{ content.story.title }}</h2>
-					<p class="lead">{{ content.story.intro }}</p>
-					<div class="timeline">
-						<article v-for="milestone in content.story.milestones" :key="milestone.year">
-							<span class="timeline-year">{{ milestone.year }}</span>
-							<div>
-								<h3>{{ milestone.title }}</h3>
-								<p>{{ milestone.text }}</p>
-							</div>
-						</article>
-					</div>
-				</div>
-			</div>
-		</section>
-
-		<section class="countdown-section">
-			<div class="countdown-decoration" aria-hidden="true">{{ content.meta.doubleHappiness }}</div>
-			<div class="section-inner countdown-inner reveal">
-				<p class="eyebrow">{{ content.countdown.eyebrow }}</p>
-				<h2>{{ content.countdown.title }}</h2>
-				<div class="countdown-grid">
-					<div v-for="item in countdownItems" :key="item.label" class="countdown-unit">
-						<strong>{{ String(item.value).padStart(2, "0") }}</strong>
-						<span>{{ item.label }}</span>
-					</div>
-				</div>
-				<p class="countdown-date">{{ content.wedding.date }}</p>
-			</div>
-		</section>
-
-		<section id="events" class="section events-section">
-			<div class="section-inner">
-				<header class="section-heading reveal">
-					<p class="eyebrow">{{ content.events.eyebrow }}</p>
-					<h2>{{ content.events.title }}</h2>
-				</header>
-				<div class="events-grid">
-					<article v-for="(event, index) in content.events.items" :key="event.time" class="event-card reveal">
-						<span class="event-index">0{{ index + 1 }}</span>
-						<time>{{ event.time }}</time>
-						<h3>{{ event.title }}</h3>
-						<strong>{{ event.place }}</strong>
-						<p>{{ event.description }}</p>
-					</article>
-				</div>
-			</div>
-		</section>
-
-		<section id="gallery" class="section gallery-section">
-			<div class="section-inner">
-				<header class="section-heading reveal">
-					<p class="eyebrow">{{ content.gallery.eyebrow }}</p>
-					<h2>{{ content.gallery.title }}</h2>
-					<p>{{ content.gallery.description }}</p>
-				</header>
-				<div class="gallery-grid">
-					<figure v-for="(item, index) in content.gallery.items" :key="item.alt" class="gallery-item reveal">
-						<img v-if="content.images.gallery[index]" :src="content.images.gallery[index]" :alt="item.alt" />
-						<div v-else class="image-placeholder gallery-placeholder" role="img" :aria-label="item.alt">
-							<span aria-hidden="true">{{ content.meta.doubleHappiness }}</span>
+	<div class="invitation" :class="{ 'is-open': opened, 'skip-motion': skipMotion }">
+		<OpeningEnvelope v-if="!opened" @start="startOpening" @opened="finishOpening" />
+		<main v-if="opened" class="paper-page" aria-label="Nội dung thiệp mời">
+			<section class="photo-chapter" aria-label="Năm khoảnh khắc của đôi mình">
+				<img class="happiness" src="/double-happiness.svg" alt="Song hỷ" width="60" height="60" />
+				<div class="photo-feed">
+					<div class="feed-slot" aria-hidden="true"></div>
+					<div class="strip-window">
+						<div class="photo-strip">
+							<figure v-for="(photo, index) in content.photos" :key="photo.src">
+								<img :src="photo.src" :alt="photo.alt" width="640" height="960" :fetchpriority="index === 0 ? 'high' : 'auto'" />
+								<figcaption>0{{ index + 1 }} <span>·</span> một đời có nhau</figcaption>
+							</figure>
 						</div>
-						<figcaption>{{ item.caption }}</figcaption>
-					</figure>
+					</div>
 				</div>
-			</div>
-		</section>
+				<div class="guest-invitation">
+					<p class="eyebrow">Trân trọng kính mời</p>
+					<p class="guest-name">{{ guestName }}</p>
+					<div class="little-rule" aria-hidden="true">✧</div>
+					<h1 ref="title" tabindex="-1" class="script"><span class="couple-name">{{ content.couple.groomShort }}</span> <span class="ampersand">&amp;</span> <span class="couple-name">{{ content.couple.brideShort }}</span></h1>
+					<p class="wedding-date">{{ content.wedding.date }}</p>
+					<a class="read-link" href="#thanh-hon">Cùng chung niềm hạnh phúc <span aria-hidden="true">↓</span></a>
+				</div>
+			</section>
 
-		<section class="section location-section">
-			<div class="section-inner location-card reveal">
-				<div class="map-art" aria-hidden="true">
-					<div class="map-lines"></div>
-					<span class="map-pin">●</span>
-					<small>{{ content.location.mapPlaceholder }}</small>
+			<section id="thanh-hon" class="ceremony chapter" aria-labelledby="ceremony-title">
+				<p class="eyebrow">Trân trọng báo tin</p>
+				<h2 id="ceremony-title">Lễ thành hôn</h2>
+				<div class="families">
+					<div v-for="family in content.families" :key="family.label">
+						<h3>{{ family.label }}</h3>
+						<p>{{ family.father }}<br />{{ family.mother }}</p>
+						<p class="family-address">{{ family.address }}</p>
+					</div>
 				</div>
-				<div class="location-copy">
-					<p class="eyebrow">{{ content.location.eyebrow }}</p>
-					<h2>{{ content.location.title }}</h2>
-					<strong>{{ content.location.room }}</strong>
-					<p>{{ content.location.address }}</p>
-					<a class="button" :href="content.location.mapUrl" target="_blank" rel="noopener">
-						{{ content.location.mapLabel }} <span aria-hidden="true">↗</span>
-					</a>
+				<p class="eyebrow children-label">Của con chúng tôi</p>
+				<div class="full-names script"><p>{{ content.couple.groom }}</p><span>&amp;</span><p>{{ content.couple.bride }}</p></div>
+				<div class="ceremony-details">
+					<p>09:30 <span aria-hidden="true">·</span> {{ content.wedding.day }}</p>
+					<time class="event-date" datetime="2026-12-06T09:30:00+07:00">{{ content.wedding.date }}</time>
+					<p class="lunar-date">{{ content.wedding.lunarDate }}</p>
+					<h3>Tư gia</h3><p>P. Hòa Cường, TP. Đà Nẵng</p>
 				</div>
-			</div>
-		</section>
+			</section>
 
-		<section id="rsvp" class="section rsvp-section">
-			<div class="rsvp-decoration" aria-hidden="true">{{ content.meta.doubleHappiness }}</div>
-			<div class="rsvp-card reveal">
-				<div class="rsvp-heading">
-					<p class="eyebrow">{{ content.rsvp.eyebrow }}</p>
-					<h2>{{ content.rsvp.title }}</h2>
-					<p>{{ content.rsvp.description }}</p>
+			<section class="reception chapter" aria-labelledby="reception-title">
+				<p class="eyebrow">Một lời mời, trọn yêu thương</p>
+				<h2 id="reception-title">Tiệc cưới</h2>
+				<div class="venue-grid">
+					<figure class="venue-figure"><img class="venue-illustration" src="/images/minh-toan-galaxy.webp" alt="Minh họa khách sạn Minh Toàn Galaxy, mặt góc bo tròn và hàng cọ" width="900" height="1125" loading="lazy" /><figcaption>Minh Toàn Galaxy · Đà Nẵng</figcaption></figure>
+					<div class="venue-copy">
+						<h3>{{ content.venue.name }}</h3><p class="room script">{{ content.venue.room }}</p><p class="venue-address">{{ content.venue.address }}</p>
+						<time class="event-date" datetime="2026-12-06T11:00:00+07:00">{{ content.wedding.date }}</time>
+						<div class="reception-times"><p><strong>11:00</strong>Đón khách</p><p><strong>12:00</strong>Khai tiệc</p></div>
+						<a class="map-link" :href="content.venue.mapUrl" target="_blank" rel="noopener noreferrer">Xem chỉ đường <span aria-hidden="true">↗</span></a>
+					</div>
 				</div>
-				<div v-if="submitted" class="success-message" role="status">
-					<div class="success-rings" aria-hidden="true"><i></i><i></i></div>
-					<h3>{{ content.rsvp.successTitle }}</h3>
-					<p>{{ content.rsvp.successMessage }}</p>
-					<button class="text-button" type="button" @click="submitted = false">
-						{{ content.rsvp.resetLabel }}
-					</button>
-				</div>
-				<form v-else @submit.prevent="submitted = true">
-					<label>
-						<span>{{ content.rsvp.nameLabel }}</span>
-						<input type="text" name="name" required :placeholder="content.rsvp.namePlaceholder" />
-					</label>
-					<fieldset>
-						<legend>{{ content.rsvp.attendanceLabel }}</legend>
-						<label v-for="option in content.rsvp.attendanceOptions" :key="option.value" class="radio-option">
-							<input type="radio" name="attendance" :value="option.value" required />
-							<span>{{ option.label }}</span>
-						</label>
-					</fieldset>
-					<label>
-						<span>{{ content.rsvp.guestsLabel }}</span>
-						<input type="number" name="guests" min="1" max="10" value="1" required />
-					</label>
-					<label class="full-field">
-						<span>{{ content.rsvp.messageLabel }}</span>
-						<textarea name="message" rows="4" :placeholder="content.rsvp.messagePlaceholder"></textarea>
-					</label>
-					<button class="button full-field" type="submit">{{ content.rsvp.submitLabel }}</button>
-				</form>
-			</div>
-		</section>
-	</main>
+			</section>
 
-	<footer class="closing-section">
-		<div class="closing-flower" aria-hidden="true"></div>
-		<p class="eyebrow">{{ content.closing.eyebrow }}</p>
-		<h2>{{ content.couple.groomShort }} <i>&</i> {{ content.couple.brideShort }}</h2>
-		<p>{{ content.closing.message }}</p>
-		<strong>{{ content.closing.signature }}</strong>
-		<time>{{ content.wedding.date }}</time>
-	</footer>
+			<section class="countdown-section chapter" aria-labelledby="countdown-title">
+				<p id="countdown-title" class="eyebrow">Cùng chờ ngày chung đôi</p>
+				<div class="countdown" role="timer" aria-label="Thời gian còn lại đến lễ thành hôn"><div v-for="unit in countdown" :key="unit.label"><strong>{{ String(unit.value).padStart(2, '0') }}</strong><span>{{ unit.label }}</span></div></div>
+				<p class="invitation-note">Sự hiện diện của bạn<br />là niềm hạnh phúc của chúng mình.</p>
+			</section>
+			<footer class="closing"><p class="script">Hẹn gặp bạn ngày chung đôi</p><p class="signature script">Duy Phúc &amp; Linh Đan</p><span class="footer-date">06 . 12 . 2026</span></footer>
+		</main>
+		<aside v-if="started" class="music-dock" aria-label="Nhạc nền">
+			<button type="button" class="music-toggle" :class="{ playing: musicPlaying }" :aria-pressed="musicPlaying" :aria-label="musicPlaying ? 'Tắt nhạc' : 'Bật nhạc'" @click="toggleMusic"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M9 17V6l11-3v11M9 9l11-3" stroke="currentColor" stroke-width="1.5" /><ellipse cx="6" cy="18" rx="3" ry="2" fill="currentColor" /><ellipse cx="17" cy="15" rx="3" ry="2" fill="currentColor" /><path v-if="!musicPlaying" d="M3 3l18 18" stroke="currentColor" stroke-width="1.5" /></svg></button>
+			<p v-if="musicNotice" role="status">{{ musicNotice }}</p>
+		</aside>
+	</div>
 </template>

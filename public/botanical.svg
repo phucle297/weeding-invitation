@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 260" fill="none">
+  <title>Cành lá dập nổi trang trí</title>
+  <defs><filter id="emboss"><feDropShadow dx="1" dy="1" stdDeviation="1" flood-color="#b49b71" flood-opacity=".25"/></filter></defs>
+  <g filter="url(#emboss)" stroke="#d8c8ad" stroke-width="1.2" fill="#fbf8f1">
+    <path d="M24 250Q70 175 70 65Q69 30 86 8M54 195Q105 175 120 125M65 135Q31 109 24 63M68 90Q110 76 118 40" fill="none"/>
+    <path d="M69 70Q44 50 52 24Q76 42 69 70ZM75 40Q100 34 104 14Q82 15 75 40ZM67 109Q85 89 99 92Q94 113 67 109ZM65 146Q36 146 29 124Q52 126 65 146ZM57 182Q80 159 92 167Q81 188 57 182ZM44 211Q20 205 19 182Q43 188 44 211ZM88 175Q86 149 105 139Q111 164 88 175ZM109 151Q109 129 127 118Q132 141 109 151ZM37 99Q12 93 10 72Q32 75 37 99ZM27 75Q28 47 13 40Q4 60 27 75ZM94 78Q97 55 113 53Q115 73 94 78ZM112 58Q108 37 122 23Q133 42 112 58Z"/>
+  </g>
+</svg>

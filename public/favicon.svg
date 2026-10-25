@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+	<title>Thiệp mời cưới</title>
+	<rect width="64" height="64" rx="16" fill="#fcfaf5"/>
+	<path d="M10 19h44v30H10z" fill="#eee8dc" stroke="#a69b8b"/>
+	<path d="m10 19 22 20 22-20" fill="#fcfaf5" stroke="#a69b8b"/>
+	<circle cx="32" cy="38" r="8" fill="#c4c3bc" stroke="#92958f"/>
+</svg>
