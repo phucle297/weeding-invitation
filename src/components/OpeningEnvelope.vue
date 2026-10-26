@@ -47,7 +47,7 @@ defineExpose({ open, finish });
 				</svg>
 			</div>
 			<div class="flap-hinge">
-				<svg class="envelope-flap" viewBox="0 0 640 320" aria-hidden="true">
+				<svg class="envelope-flap" viewBox="0 0 640 320" preserveAspectRatio="none" aria-hidden="true">
 					<path d="M1 1H639Q628 42 590 58Q586 94 545 101Q532 141 491 141Q469 183 428 177Q401 219 362 210Q320 262 278 210Q239 219 212 177Q171 183 149 141Q108 141 95 101Q54 94 50 58Q12 42 1 1Z" fill="#fffdf9" stroke="#cdb88f" stroke-width="1.5" />
 				</svg>
 				<button class="wax-seal" type="button" aria-label="Mở thiệp mời" :disabled="opening" @click="open">

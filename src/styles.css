@@ -695,15 +695,46 @@ h3 {
 	}
 }
 @media (max-width: 700px) {
+	.envelope-scene {
+		width: min(76vw, 300px, 38svh);
+		aspect-ratio: 2 / 3;
+	}
+	.opening-letter {
+		bottom: 5%;
+	}
+	.is-opening .opening-letter {
+		animation-name: mobile-extract-letter;
+	}
+	.flap-hinge {
+		height: 61%;
+	}
+	.wax-seal {
+		top: 72%;
+		width: 22%;
+	}
+	.is-opening .flap-hinge {
+		animation:
+			open-flap 0.95s ease-in-out forwards,
+			mobile-envelope-leaves 3.5s 0.95s cubic-bezier(0.4, 0, 0.18, 1) both;
+	}
+	.is-opening .envelope-back,
+	.is-opening .envelope-pocket {
+		animation: mobile-envelope-leaves 3.5s 0.95s cubic-bezier(0.4, 0, 0.18, 1)
+			both;
+	}
 	.paper-page {
-		padding: 54px 30px 0;
+		padding: 36px 24px 0;
+	}
+	.happiness {
+		width: 52px;
+		height: 52px;
+		margin-bottom: 20px;
 	}
 	.photo-feed {
-		width: clamp(190px, 58vw, 280px);
+		width: min(78vw, 300px, calc(100% - 18px));
 	}
 	.guest-invitation {
-		padding-top: 38px;
-		padding-bottom: 60px;
+		padding: 32px 0 44px;
 	}
 	h1 {
 		max-width: 370px;
@@ -724,16 +755,18 @@ h3 {
 		letter-spacing: 0.15em;
 	}
 	.chapter {
-		padding: 58px 0;
+		padding: 44px 0;
 	}
 	h2 {
-		margin-bottom: 36px;
+		margin: 12px 0 28px;
 	}
 	.families {
-		gap: 18px;
+		grid-template-columns: 1fr;
+		gap: 24px;
 	}
 	.families h3 {
 		font-size: 20px;
+		margin-bottom: 8px;
 	}
 	.families p {
 		font-size: 16px;
@@ -742,19 +775,21 @@ h3 {
 		font-size: 14px;
 	}
 	.families > div + div {
-		padding-left: 14px;
+		border-left: 0;
+		border-top: 1px solid var(--line);
+		padding: 24px 0 0;
 	}
 	.children-label {
-		margin-top: 38px;
+		margin-top: 32px;
 	}
 	.full-names {
-		font-size: clamp(32px, 8.2vw, 48px);
-		line-height: 1.8;
-		margin-top: 18px;
+		font-size: clamp(28px, 7.8vw, 40px);
+		line-height: 1.65;
+		margin: 16px 0 28px;
 	}
 	.venue-grid {
 		grid-template-columns: 1fr;
-		gap: 32px;
+		gap: 24px;
 	}
 	.venue-figure {
 		width: min(340px, 100%);
@@ -767,6 +802,9 @@ h3 {
 	.venue-address {
 		font-size: 18px;
 	}
+	.room {
+		font-size: clamp(27px, 7.5vw, 33px);
+	}
 	.countdown {
 		gap: 8px;
 	}
@@ -778,7 +816,7 @@ h3 {
 		font-size: 15px;
 	}
 	.closing {
-		padding: 4px 0 130px;
+		padding: 12px 0 96px;
 	}
 	.closing > .script {
 		font-size: 34px;
@@ -787,21 +825,12 @@ h3 {
 		font-size: 39px;
 	}
 	.music-dock {
-		left: 0;
-		right: 0;
-		bottom: 0;
-		height: calc(64px + env(safe-area-inset-bottom));
-		display: flex;
-		justify-content: flex-end;
-		padding: 10px 12px;
-		background: var(--paper);
-		border-top: 1px solid #cbb48c33;
-		pointer-events: none;
+		right: max(12px, env(safe-area-inset-right));
+		bottom: calc(12px + env(safe-area-inset-bottom));
 	}
 	.music-toggle {
 		width: 44px;
 		height: 44px;
-		pointer-events: auto;
 	}
 	.ceremony::after {
 		left: -28px;
@@ -811,19 +840,41 @@ h3 {
 }
 @media (max-width: 360px) {
 	.paper-page {
-		padding-left: 24px;
-		padding-right: 24px;
+		padding-left: 20px;
+		padding-right: 20px;
 	}
-	.families {
-		grid-template-columns: 1fr;
-		gap: 28px;
+}
+@keyframes mobile-extract-letter {
+	0% {
+		z-index: 3;
+		transform: translateY(0) scale(1);
 	}
-	.families > div + div {
-		border: 0;
-		padding: 0;
+	35.99% {
+		z-index: 3;
+		transform: translateY(-60%) scale(1);
 	}
-	.full-names {
-		font-size: 32px;
+	36% {
+		z-index: 6;
+		transform: translateY(-60%) scale(1);
+	}
+	52% {
+		z-index: 6;
+		transform: translateY(-6svh) scale(1);
+	}
+	100% {
+		z-index: 6;
+		transform: translateY(-6svh) scale(12);
+	}
+}
+@keyframes mobile-envelope-leaves {
+	0% {
+		translate: 0 0;
+	}
+	36% {
+		translate: 0 32svh;
+	}
+	100% {
+		translate: 0 110svh;
 	}
 }
 @media (prefers-reduced-motion: reduce) {
