@@ -148,9 +148,9 @@ a:focus-visible {
 .opening-letter {
 	position: absolute;
 	bottom: 3%;
-	left: 29%;
-	width: 42%;
-	aspect-ratio: 2 / 3;
+	left: 3%;
+	width: 94%;
+	height: 90%;
 	z-index: 3;
 	background: var(--paper);
 	border: 1px solid #dac9ad;
@@ -178,8 +178,8 @@ a:focus-visible {
 	width: 65%;
 	height: 5px;
 	border-radius: 20px;
-	background: #93816a;
-	box-shadow: inset 0 2px 3px #59463266;
+	background: #a13d32;
+	box-shadow: inset 0 2px 3px #69271f77;
 }
 .is-opening .flap-hinge {
 	animation:
@@ -187,10 +187,10 @@ a:focus-visible {
 		envelope-leaves 1.8s 2.5s cubic-bezier(0.4, 0, 0.6, 1) forwards;
 }
 .is-opening .opening-letter {
-	animation: extract-letter 3.8s 0.65s cubic-bezier(0.4, 0, 0.18, 1) both;
+	animation: extract-letter 3.5s 0.95s cubic-bezier(0.4, 0, 0.18, 1) both;
 }
 .is-opening .letter-details {
-	animation: quiet-details 0.65s 2.1s both;
+	animation: quiet-details 0.65s 2.35s both;
 }
 .is-opening .envelope-back,
 .is-opening .envelope-pocket {
@@ -237,15 +237,23 @@ a:focus-visible {
 }
 @keyframes extract-letter {
 	0% {
+		z-index: 3;
 		transform: translateY(0) scale(1);
 	}
+	35.99% {
+		z-index: 3;
+		transform: translateY(-112%) scale(1);
+	}
 	36% {
-		transform: translateY(-60%) scale(1.18);
+		z-index: 6;
+		transform: translateY(-112%) scale(1);
 	}
 	64% {
+		z-index: 6;
 		transform: translateY(-68%) scale(2.4);
 	}
 	100% {
+		z-index: 6;
 		transform: translateY(-12svh) scale(12);
 	}
 }
@@ -284,13 +292,13 @@ a:focus-visible {
 	text-align: center;
 }
 .happiness {
-	width: 50px;
-	height: 50px;
+	width: 64px;
+	height: 64px;
 	display: block;
 	margin: 0 auto 28px;
 }
 .photo-feed {
-	width: clamp(210px, 54vw, 300px);
+	width: clamp(210px, 54vw, 340px);
 	margin: auto;
 	position: relative;
 }
@@ -300,11 +308,11 @@ a:focus-visible {
 	width: calc(100% + 18px);
 	margin-left: -9px;
 	height: 8px;
-	border: 1px solid #a99575;
+	border: 1px solid #b9574b;
 	border-radius: 5px;
-	background: #746149;
+	background: #a13d32;
 	box-shadow:
-		inset 0 3px 3px #38271577,
+		inset 0 3px 3px #69271f77,
 		0 3px 5px #5946321f;
 }
 .strip-window {
@@ -679,6 +687,9 @@ h3 {
 }
 
 @media (min-width: 1200px) {
+	.envelope-scene {
+		width: min(680px, 84vw);
+	}
 	.paper-page {
 		box-shadow: 0 0 50px #59463205;
 	}

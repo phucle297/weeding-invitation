@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
 	<title>Song hỷ</title>
 	<defs>
-		<g id="xi" fill="none" stroke="#a48650" stroke-width="4.5" stroke-linejoin="miter">
+		<g id="xi" fill="none" stroke="#a13d32" stroke-width="4.5" stroke-linejoin="miter">
 			<path d="M4 12h39M24 3v22M9 25h30M11 34h26v13H11zM13 52l5 9m17-9-5 9M4 62h39M10 72h28v20H10z"/>
 		</g>
 	</defs>
