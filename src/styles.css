@@ -147,7 +147,7 @@ a:focus-visible {
 }
 .opening-letter {
 	position: absolute;
-	bottom: 3%;
+	bottom: 5%;
 	left: 3%;
 	width: 94%;
 	height: 90%;
@@ -242,19 +242,19 @@ a:focus-visible {
 	}
 	35.99% {
 		z-index: 3;
-		transform: translateY(-112%) scale(1);
+		transform: translateY(var(--letter-pull, -112%)) scale(1);
 	}
 	36% {
 		z-index: 6;
-		transform: translateY(-112%) scale(1);
+		transform: translateY(var(--letter-pull, -112%)) scale(1);
 	}
-	64% {
+	52% {
 		z-index: 6;
-		transform: translateY(-68%) scale(2.4);
+		transform: translateY(-6svh) scale(1);
 	}
 	100% {
 		z-index: 6;
-		transform: translateY(-12svh) scale(12);
+		transform: translateY(-6svh) scale(12);
 	}
 }
 @keyframes quiet-details {
@@ -696,14 +696,9 @@ h3 {
 }
 @media (max-width: 700px) {
 	.envelope-scene {
+		--letter-pull: -60%;
 		width: min(76vw, 300px, 38svh);
 		aspect-ratio: 2 / 3;
-	}
-	.opening-letter {
-		bottom: 5%;
-	}
-	.is-opening .opening-letter {
-		animation-name: mobile-extract-letter;
 	}
 	.flap-hinge {
 		height: 61%;
@@ -842,28 +837,6 @@ h3 {
 	.paper-page {
 		padding-left: 20px;
 		padding-right: 20px;
-	}
-}
-@keyframes mobile-extract-letter {
-	0% {
-		z-index: 3;
-		transform: translateY(0) scale(1);
-	}
-	35.99% {
-		z-index: 3;
-		transform: translateY(-60%) scale(1);
-	}
-	36% {
-		z-index: 6;
-		transform: translateY(-60%) scale(1);
-	}
-	52% {
-		z-index: 6;
-		transform: translateY(-6svh) scale(1);
-	}
-	100% {
-		z-index: 6;
-		transform: translateY(-6svh) scale(12);
 	}
 }
 @keyframes mobile-envelope-leaves {
